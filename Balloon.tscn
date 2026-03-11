@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://3y6gmeypd877"]
+
+[ext_resource type="Shader" uid="uid://ch3hlqhjtceut" path="res://PenInk.gdshader" id="1_3m7xq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0i1jt"]
+render_priority = 0
+shader = ExtResource("1_3m7xq")
+shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
+shader_parameter/fill_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 0.2810000133475
+shader_parameter/outline_softness = 1.0
+shader_parameter/wobble_scale = 1.0
+shader_parameter/wobble_strength = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_c03q2"]
+
+[node name="Node3D" type="Node3D" unique_id=443575708]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=857773201]
+material_override = SubResource("ShaderMaterial_0i1jt")
+mesh = SubResource("SphereMesh_c03q2")
