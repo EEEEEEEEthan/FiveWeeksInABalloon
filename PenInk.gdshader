@@ -16,7 +16,7 @@ uniform float wobble_scale : hint_range(0.001, 1.0, 0.001) = 0.4;
 uniform float wobble_strength : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform vec3 contour_axis = vec3(0.0, 1.0, 0.0);
 uniform bool contour_use_uv = false;
-uniform float contour_spacing : hint_range(0.002, 2.0, 0.001) = 0.22;
+uniform float contour_spacing : hint_range(0.001, 10.0, 0.001) = 0.22;
 uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
 uniform float contour_far_spacing_compensation : hint_range(0.0, 1.0, 0.001) = 0.7;
@@ -106,11 +106,7 @@ void fragment() {
 	float contour_coord = contour_use_uv
 		? dot(UV, uv_axis) + (contour_noise - 0.5) * contour_noise_strength
 		: dot(local_pos, axis) + (contour_noise - 0.5) * contour_noise_strength;
-	float contour_coord_aa = max(fwidth(contour_coord), 0.0001);
-	float target_phase_aa = mix(0.45, 0.2, contour_far_spacing_compensation);
-	float far_spacing = contour_coord_aa / target_phase_aa;
-	float adjusted_spacing = mix(spacing, max(spacing, far_spacing), contour_far_spacing_compensation);
-	float contour_phase = contour_coord / adjusted_spacing;
+	float contour_phase = contour_coord / spacing;
 	float contour_distance = abs(fract(contour_phase + 0.5) - 0.5);
 	float contour_aa = max(fwidth(contour_phase), 0.001);
 	float compensated_width = contour_aa * contour_pixel_width;
@@ -121,7 +117,9 @@ void fragment() {
 	float light_adjusted_line_half_width = mix(-contour_aa, line_half_width, curve_contour_threshold);
 	float contour_line = 1.0 - smoothstep(light_adjusted_line_half_width, light_adjusted_line_half_width + contour_aa, contour_distance);
 	float contour_coverage = clamp(max(light_adjusted_line_half_width, 0.0) * 2.0, 0.0, 1.0);
-	float contour_filter = smoothstep(0.35, 1.2, contour_aa);
+	float contour_filter_start = mix(0.55, 0.25, contour_far_spacing_compensation);
+	float contour_filter_end = mix(1.6, 0.75, contour_far_spacing_compensation);
+	float contour_filter = smoothstep(contour_filter_start, contour_filter_end, contour_aa);
 	float filtered_contour_line = mix(contour_line, contour_coverage, contour_filter);
 
 	vec4 final_color = mix(fill_color, ink_color, outline);
