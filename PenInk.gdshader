@@ -74,8 +74,10 @@ void fragment() {
 	float wobble = (wobble_noise - 0.5) * noise_strength;
 	float edge_start = 1.0 - outline_width + wobble;
 	float outline = smoothstep(edge_start - softness, edge_start, rim);
+	float hard_edge_wobble_noise = smooth_fbm13(local_pos * contour_noise_scale + vec3(4.7, 8.1, 1.3));
+	float hard_edge_wobble = (hard_edge_wobble_noise - 0.5) * mix(0.0, 0.12, wobble_strength);
 	vec2 screen_pixel = 1.0 / VIEWPORT_SIZE;
-	vec2 hard_edge_offset = screen_pixel * mix(0.75, 2.5, hard_edge_width);
+	vec2 hard_edge_offset = screen_pixel * (mix(0.75, 2.5, hard_edge_width) + hard_edge_wobble * 8.0);
 	vec3 center_scene_normal = sample_scene_normal(SCREEN_UV);
 	float hard_edge_signal = 0.0;
 	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(hard_edge_offset.x, 0.0)) - center_scene_normal));
@@ -86,7 +88,7 @@ void fragment() {
 	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV - hard_edge_offset) - center_scene_normal));
 	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(hard_edge_offset.x, -hard_edge_offset.y)) - center_scene_normal));
 	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(-hard_edge_offset.x, hard_edge_offset.y)) - center_scene_normal));
-	float hard_edge_threshold_value = max(hard_edge_threshold, 0.0001);
+	float hard_edge_threshold_value = max(hard_edge_threshold + hard_edge_wobble, 0.0001);
 	float hard_edge_line = smoothstep(hard_edge_threshold_value, hard_edge_threshold_value * 1.8, hard_edge_signal);
 	hard_edge_line *= 1.0 - outline;
 
