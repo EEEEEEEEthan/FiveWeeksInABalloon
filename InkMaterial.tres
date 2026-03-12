@@ -1,15 +1,6 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://p0wjnhqsv6f3"]
 
-[ext_resource type="Shader" uid="uid://tixonmsupji8" path="res://PenOutline.gdshader" id="1_rbqmy"]
 [ext_resource type="Shader" uid="uid://ch3hlqhjtceut" path="res://PenInk.gdshader" id="2_algsb"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_outline"]
-render_priority = -1
-shader = ExtResource("1_rbqmy")
-shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
-shader_parameter/outline_width = 0.0270000012825
-shader_parameter/stroke_scale = 0.45600002166
-shader_parameter/stroke_strength = 1.0
 
 [sub_resource type="Curve" id="Curve_rbqmy"]
 _data = [Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.496437, 1), 0.0, 0.0, 0, 0, Vector2(0.76247025, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -24,18 +15,19 @@ curve = SubResource("Curve_rbqmy")
 
 [resource]
 render_priority = 0
-next_pass = SubResource("ShaderMaterial_outline")
 shader = ExtResource("2_algsb")
 shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
 shader_parameter/fill_color = Color(1, 1, 1, 1)
-shader_parameter/outline_width = 0.16400000779
-shader_parameter/outline_softness = 0.2
+shader_parameter/outline_width = 0.146000006935
+shader_parameter/outline_softness = 0.0010000000475
+shader_parameter/hard_edge_width = 0.0
+shader_parameter/hard_edge_threshold = 0.78000003705
 shader_parameter/wobble_scale = 1.0
 shader_parameter/wobble_strength = 1.0
-shader_parameter/contour_axis = Vector3(2.325, 2.04, 2.77)
+shader_parameter/contour_axis = Vector3(0, 1, 0)
 shader_parameter/contour_use_uv = false
-shader_parameter/contour_spacing = 0.06400000303999
-shader_parameter/contour_line_width = 0.170000008075
-shader_parameter/contour_distance_compensation = 0.606000028785
-shader_parameter/contour_far_spacing_compensation = 0.234000011115
+shader_parameter/contour_spacing = 0.10000000475000001
+shader_parameter/contour_line_width = 0.08400000399
+shader_parameter/contour_distance_compensation = 0.3170000150575
+shader_parameter/contour_far_spacing_compensation = 0.0
 shader_parameter/contour_light_threshold_curve = SubResource("CurveTexture_algsb")
