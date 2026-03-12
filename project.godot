@@ -30,3 +30,10 @@ naming/script_name_casing=1
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+
+[shader_globals]
+
+pen_ink_light_direction={
+"type": "vec3",
+"value": Vector3(-0.4, -0.8, -0.35)
+}

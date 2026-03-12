@@ -3,6 +3,8 @@ render_mode unshaded, blend_mix, depth_prepass_alpha, cull_back;
 
 #include "res://ShaderRandom.gdshaderinc"
 
+global uniform vec3 pen_ink_light_direction;
+
 uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
 uniform vec4 fill_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
@@ -11,10 +13,13 @@ uniform float wobble_scale : hint_range(0.001, 1.0, 0.001) = 0.4;
 uniform float wobble_strength : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform vec3 contour_axis = vec3(0.0, 1.0, 0.0);
 uniform bool contour_use_uv = false;
-uniform float contour_spacing : hint_range(0.02, 2.0, 0.01) = 0.22;
+uniform float contour_spacing : hint_range(0.002, 2.0, 0.001) = 0.22;
 uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
 uniform float contour_far_spacing_compensation : hint_range(0.0, 1.0, 0.001) = 0.7;
+uniform sampler2D contour_light_threshold_curve : hint_default_white;
+uniform bool use_contour_light_threshold_curve = false;
+uniform float contour_light_softness : hint_range(0.001, 1.0, 0.001) = 0.16;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
@@ -48,6 +53,7 @@ void vertex() {
 void fragment() {
 	vec3 n = normalize(world_normal);
 	vec3 view_dir = normalize(CAMERA_POSITION_WORLD - world_pos);
+	vec3 light_direction = pen_ink_light_direction / max(length(pen_ink_light_direction), 0.0001);
 	float rim = 1.0 - max(dot(n, view_dir), 0.0);
 	float softness = mix(0.002, 0.08, outline_softness);
 	float noise_scale = mix(0.5, 18.0, wobble_scale);
@@ -81,8 +87,15 @@ void fragment() {
 	float contour_aa = max(fwidth(contour_phase), 0.001);
 	float compensated_width = contour_aa * contour_pixel_width;
 	float line_half_width = mix(contour_base_width, compensated_width, contour_distance_compensation);
-	float contour_line = 1.0 - smoothstep(line_half_width, line_half_width + contour_aa, contour_distance);
-	float contour_coverage = clamp(line_half_width * 2.0, 0.0, 1.0);
+	float surface_light = clamp(dot(n, -light_direction), 0.0, 1.0);
+	float default_contour_threshold = 1.0 - smoothstep(0.18, 0.18 + max(contour_light_softness, 0.001), surface_light);
+	float curve_contour_threshold = texture(contour_light_threshold_curve, vec2(surface_light, 0.5)).r;
+	float contour_light_threshold = use_contour_light_threshold_curve
+		? curve_contour_threshold
+		: default_contour_threshold;
+	float light_adjusted_line_half_width = mix(-contour_aa, line_half_width, contour_light_threshold);
+	float contour_line = 1.0 - smoothstep(light_adjusted_line_half_width, light_adjusted_line_half_width + contour_aa, contour_distance);
+	float contour_coverage = clamp(max(light_adjusted_line_half_width, 0.0) * 2.0, 0.0, 1.0);
 	float contour_filter = smoothstep(0.35, 1.2, contour_aa);
 	float filtered_contour_line = mix(contour_line, contour_coverage, contour_filter);
 
