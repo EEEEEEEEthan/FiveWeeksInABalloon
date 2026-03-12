@@ -12,6 +12,7 @@ config_version=5
 
 config/name="FiveWeeksInABalloon"
 config/description="气球上的五星期"
+run/main_scene="uid://bgwr3netxi644"
 config/features=PackedStringArray("4.7")
 
 [dotnet]
