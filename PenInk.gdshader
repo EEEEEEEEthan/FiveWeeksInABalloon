@@ -4,11 +4,14 @@ render_mode unshaded, blend_mix, depth_prepass_alpha, cull_back;
 #include "res://ShaderRandom.gdshaderinc"
 
 global uniform vec3 pen_ink_light_direction;
+uniform sampler2D scene_normal_texture : hint_normal_roughness_texture, repeat_disable, filter_nearest;
 
 uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
 uniform vec4 fill_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
 uniform float outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
+uniform float hard_edge_width : hint_range(0.0, 1.0, 0.001) = 0.35;
+uniform float hard_edge_threshold : hint_range(0.001, 1.0, 0.001) = 0.18;
 uniform float wobble_scale : hint_range(0.001, 1.0, 0.001) = 0.4;
 uniform float wobble_strength : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform vec3 contour_axis = vec3(0.0, 1.0, 0.0);
@@ -42,6 +45,11 @@ vec2 contour_axis_to_uv_axis(vec3 axis) {
 	return vec2(1.0, 0.0);
 }
 
+vec3 sample_scene_normal(vec2 screen_uv) {
+	vec3 encoded_normal = texture(scene_normal_texture, screen_uv).xyz;
+	return normalize(encoded_normal * 2.0 - 1.0);
+}
+
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
@@ -66,6 +74,21 @@ void fragment() {
 	float wobble = (wobble_noise - 0.5) * noise_strength;
 	float edge_start = 1.0 - outline_width + wobble;
 	float outline = smoothstep(edge_start - softness, edge_start, rim);
+	vec2 screen_pixel = 1.0 / VIEWPORT_SIZE;
+	vec2 hard_edge_offset = screen_pixel * mix(0.75, 2.5, hard_edge_width);
+	vec3 center_scene_normal = sample_scene_normal(SCREEN_UV);
+	float hard_edge_signal = 0.0;
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(hard_edge_offset.x, 0.0)) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV - vec2(hard_edge_offset.x, 0.0)) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(0.0, hard_edge_offset.y)) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV - vec2(0.0, hard_edge_offset.y)) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + hard_edge_offset) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV - hard_edge_offset) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(hard_edge_offset.x, -hard_edge_offset.y)) - center_scene_normal));
+	hard_edge_signal = max(hard_edge_signal, length(sample_scene_normal(SCREEN_UV + vec2(-hard_edge_offset.x, hard_edge_offset.y)) - center_scene_normal));
+	float hard_edge_threshold_value = max(hard_edge_threshold, 0.0001);
+	float hard_edge_line = smoothstep(hard_edge_threshold_value, hard_edge_threshold_value * 1.8, hard_edge_signal);
+	hard_edge_line *= 1.0 - outline;
 
 	vec3 axis = contour_axis / max(length(contour_axis), 0.0001);
 	vec2 uv_axis = contour_axis_to_uv_axis(axis);
@@ -95,6 +118,7 @@ void fragment() {
 	float filtered_contour_line = mix(contour_line, contour_coverage, contour_filter);
 
 	vec4 final_color = mix(fill_color, ink_color, outline);
+	final_color.rgb = mix(final_color.rgb, ink_color.rgb, hard_edge_line);
 	final_color.rgb = mix(final_color.rgb, ink_color.rgb, filtered_contour_line);
 	ALBEDO = final_color.rgb;
 	ALPHA = final_color.a;
