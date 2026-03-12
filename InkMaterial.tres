@@ -12,11 +12,11 @@ shader_parameter/stroke_scale = 0.45600002166
 shader_parameter/stroke_strength = 1.0
 
 [sub_resource type="Curve" id="Curve_rbqmy"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.3125, 1), 0.0, 0.0, 0, 0, Vector2(0.5694445, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.496437, 1), 0.0, 0.0, 0, 0, Vector2(0.76247025, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
-point_0/position = Vector2(0, 1)
-point_1/position = Vector2(0.3125, 1)
-point_2/position = Vector2(0.5694445, 0)
+point_0/position = Vector2(1e-05, 1)
+point_1/position = Vector2(0.496437, 1)
+point_2/position = Vector2(0.76247025, 0)
 point_3/position = Vector2(1, 0)
 
 [sub_resource type="CurveTexture" id="CurveTexture_algsb"]
@@ -28,16 +28,14 @@ next_pass = SubResource("ShaderMaterial_outline")
 shader = ExtResource("2_algsb")
 shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
 shader_parameter/fill_color = Color(1, 1, 1, 1)
-shader_parameter/outline_width = 0.18400000874
+shader_parameter/outline_width = 0.16400000779
 shader_parameter/outline_softness = 0.2
 shader_parameter/wobble_scale = 1.0
 shader_parameter/wobble_strength = 1.0
 shader_parameter/contour_axis = Vector3(2.325, 2.04, 2.77)
 shader_parameter/contour_use_uv = false
-shader_parameter/contour_spacing = 0.02900000137749
-shader_parameter/contour_line_width = 0.14
-shader_parameter/contour_distance_compensation = 0.82
-shader_parameter/contour_far_spacing_compensation = 0.7
+shader_parameter/contour_spacing = 0.06400000303999
+shader_parameter/contour_line_width = 0.170000008075
+shader_parameter/contour_distance_compensation = 0.606000028785
+shader_parameter/contour_far_spacing_compensation = 0.234000011115
 shader_parameter/contour_light_threshold_curve = SubResource("CurveTexture_algsb")
-shader_parameter/use_contour_light_threshold_curve = true
-shader_parameter/contour_light_softness = 0.16

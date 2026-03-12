@@ -18,8 +18,6 @@ uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
 uniform float contour_far_spacing_compensation : hint_range(0.0, 1.0, 0.001) = 0.7;
 uniform sampler2D contour_light_threshold_curve : hint_default_white;
-uniform bool use_contour_light_threshold_curve = false;
-uniform float contour_light_softness : hint_range(0.001, 1.0, 0.001) = 0.16;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
@@ -89,12 +87,8 @@ void fragment() {
 	float line_half_width = mix(contour_base_width, compensated_width, contour_distance_compensation);
 	float signed_light_alignment = dot(n, -light_direction);
 	float surface_light = signed_light_alignment * 0.5 + 0.5;
-	float default_contour_threshold = 1.0 - smoothstep(0.59, 0.59 + max(contour_light_softness, 0.001), surface_light);
 	float curve_contour_threshold = texture(contour_light_threshold_curve, vec2(clamp(surface_light, 0.0, 1.0), 0.5)).r;
-	float contour_light_threshold = use_contour_light_threshold_curve
-		? curve_contour_threshold
-		: default_contour_threshold;
-	float light_adjusted_line_half_width = mix(-contour_aa, line_half_width, contour_light_threshold);
+	float light_adjusted_line_half_width = mix(-contour_aa, line_half_width, curve_contour_threshold);
 	float contour_line = 1.0 - smoothstep(light_adjusted_line_half_width, light_adjusted_line_half_width + contour_aa, contour_distance);
 	float contour_coverage = clamp(max(light_adjusted_line_half_width, 0.0) * 2.0, 0.0, 1.0);
 	float contour_filter = smoothstep(0.35, 1.2, contour_aa);
