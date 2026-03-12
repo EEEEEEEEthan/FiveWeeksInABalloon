@@ -14,6 +14,7 @@ uniform bool contour_use_uv = false;
 uniform float contour_spacing : hint_range(0.02, 2.0, 0.01) = 0.22;
 uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
+uniform float contour_far_spacing_compensation : hint_range(0.0, 1.0, 0.001) = 0.7;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
@@ -71,15 +72,22 @@ void fragment() {
 	float contour_coord = contour_use_uv
 		? dot(UV, uv_axis) + (contour_noise - 0.5) * contour_noise_strength
 		: dot(local_pos, axis) + (contour_noise - 0.5) * contour_noise_strength;
-	float contour_phase = contour_coord / spacing;
+	float contour_coord_aa = max(fwidth(contour_coord), 0.0001);
+	float target_phase_aa = mix(0.45, 0.2, contour_far_spacing_compensation);
+	float far_spacing = contour_coord_aa / target_phase_aa;
+	float adjusted_spacing = mix(spacing, max(spacing, far_spacing), contour_far_spacing_compensation);
+	float contour_phase = contour_coord / adjusted_spacing;
 	float contour_distance = abs(fract(contour_phase + 0.5) - 0.5);
 	float contour_aa = max(fwidth(contour_phase), 0.001);
 	float compensated_width = contour_aa * contour_pixel_width;
 	float line_half_width = mix(contour_base_width, compensated_width, contour_distance_compensation);
 	float contour_line = 1.0 - smoothstep(line_half_width, line_half_width + contour_aa, contour_distance);
+	float contour_coverage = clamp(line_half_width * 2.0, 0.0, 1.0);
+	float contour_filter = smoothstep(0.35, 1.2, contour_aa);
+	float filtered_contour_line = mix(contour_line, contour_coverage, contour_filter);
 
 	vec4 final_color = mix(fill_color, ink_color, outline);
-	final_color.rgb = mix(final_color.rgb, ink_color.rgb, contour_line);
+	final_color.rgb = mix(final_color.rgb, ink_color.rgb, filtered_contour_line);
 	ALBEDO = final_color.rgb;
 	ALPHA = final_color.a;
 }

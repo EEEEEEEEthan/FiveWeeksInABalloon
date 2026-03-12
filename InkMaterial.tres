@@ -26,3 +26,4 @@ shader_parameter/contour_use_uv = false
 shader_parameter/contour_spacing = 0.04999999888240999
 shader_parameter/contour_line_width = 1.0
 shader_parameter/contour_distance_compensation = 0.166000007885
+shader_parameter/contour_far_spacing_compensation = 0.0
