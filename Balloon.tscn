@@ -4,9 +4,38 @@
 [ext_resource type="ArrayMesh" uid="uid://dh85jhptardpu" path="res://Balloon.obj" id="2_rpx6m"]
 [ext_resource type="Script" uid="uid://bme8dgn78wbc" path="res://PenInkInstance.gd" id="3_gxany"]
 
-[node name="Node3D" type="Node3D" unique_id=443575708]
+[sub_resource type="GDScript" id="GDScript_gxany"]
+resource_name = "Balloon"
+script/source = "extends Node3D
 
-[node name="Ball" type="MeshInstance3D" parent="." unique_id=857773201]
+@export_range(0.0, 5.0, 0.01) var max_drift_range: float = 0.35
+
+var _time := 0.0
+var _phase := 0.0
+
+
+func _ready() -> void:
+	_phase = float(get_instance_id() % 1024) * 0.013
+
+
+func _process(delta: float) -> void:
+	_time += delta
+	var t := _time * 0.6 + _phase
+	var offset := Vector3(
+		sin(t * 0.83) * 0.55 + sin(t * 1.71) * 0.2,
+		sin(t * 1.11) * 0.65 + cos(t * 0.37) * 0.15,
+		cos(t * 0.74) * 0.45 + sin(t * 1.29) * 0.18
+	)
+	if offset.length() > 0.0:
+		offset = offset.normalized() * min(offset.length(), 1.0)
+	position = offset * max_drift_range
+"
+
+[node name="Balloon" type="Node3D" unique_id=443575708]
+script = SubResource("GDScript_gxany")
+
+[node name="Balloon" type="MeshInstance3D" parent="." unique_id=857773201]
+unique_name_in_owner = true
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 material_override = ExtResource("1_12dx6")
 instance_shader_parameters/contour_axis = Vector3(0, 1, 0)

@@ -4,11 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://bo0y4souq5lk0" path="res://Paper.jpg" id="2_rbqmy"]
 
 [sub_resource type="Curve" id="Curve_rbqmy"]
-_data = [Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.37179488, 1), 0.0, 0.0, 0, 0, Vector2(0.6179487, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.22926828, 1), 0.0, 0.0, 0, 0, Vector2(0.67317075, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 point_0/position = Vector2(1e-05, 1)
-point_1/position = Vector2(0.37179488, 1)
-point_2/position = Vector2(0.6179487, 0)
+point_1/position = Vector2(0.22926828, 1)
+point_2/position = Vector2(0.67317075, 0)
 point_3/position = Vector2(1, 0)
 
 [sub_resource type="CurveTexture" id="CurveTexture_algsb"]
@@ -20,8 +20,8 @@ shader = ExtResource("2_algsb")
 shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
 shader_parameter/fill_color = Color(1, 1, 1, 1)
 shader_parameter/fill_texture = ExtResource("2_rbqmy")
-shader_parameter/outline_width = 0.24000001140000002
-shader_parameter/outline_softness = 0.0010000000475
+shader_parameter/outline_width = 0.370000017575
+shader_parameter/outline_softness = 0.346000016435
 shader_parameter/hard_edge_width = 0.0
 shader_parameter/hard_edge_threshold = 1.0
 shader_parameter/wobble_scale = 1.0
