@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://csi5n7mns5unl"]
+
+[ext_resource type="Material" uid="uid://p0wjnhqsv6f3" path="res://InkMaterial.tres" id="1_as5sp"]
+[ext_resource type="ArrayMesh" uid="uid://ctuwo8w3jojv1" path="res://new_array_mesh.tres" id="2_xnhu5"]
+
+[node name="Node3D" type="Node3D" unique_id=1785658214]
+
+[node name="convert" type="Node3D" parent="." unique_id=429329274]
+
+[node name="texture_pbr_v128" type="MeshInstance3D" parent="convert" unique_id=1504523602]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0)
+material_override = ExtResource("1_as5sp")
+mesh = ExtResource("2_xnhu5")
