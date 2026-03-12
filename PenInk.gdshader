@@ -87,9 +87,10 @@ void fragment() {
 	float contour_aa = max(fwidth(contour_phase), 0.001);
 	float compensated_width = contour_aa * contour_pixel_width;
 	float line_half_width = mix(contour_base_width, compensated_width, contour_distance_compensation);
-	float surface_light = clamp(dot(n, -light_direction), 0.0, 1.0);
-	float default_contour_threshold = 1.0 - smoothstep(0.18, 0.18 + max(contour_light_softness, 0.001), surface_light);
-	float curve_contour_threshold = texture(contour_light_threshold_curve, vec2(surface_light, 0.5)).r;
+	float signed_light_alignment = dot(n, -light_direction);
+	float surface_light = signed_light_alignment * 0.5 + 0.5;
+	float default_contour_threshold = 1.0 - smoothstep(0.59, 0.59 + max(contour_light_softness, 0.001), surface_light);
+	float curve_contour_threshold = texture(contour_light_threshold_curve, vec2(clamp(surface_light, 0.0, 1.0), 0.5)).r;
 	float contour_light_threshold = use_contour_light_threshold_curve
 		? curve_contour_threshold
 		: default_contour_threshold;
