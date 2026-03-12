@@ -13,8 +13,6 @@ uniform vec3 contour_axis = vec3(0.0, 1.0, 0.0);
 uniform float contour_spacing : hint_range(0.02, 2.0, 0.01) = 0.22;
 uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
-uniform float contour_wobble_scale : hint_range(0.0, 1.0, 0.001) = 0.32;
-uniform float contour_wobble_strength : hint_range(0.0, 1.0, 0.001) = 0.18;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
@@ -36,8 +34,8 @@ void fragment() {
 	float spacing = max(contour_spacing, 0.0001);
 	float contour_base_width = mix(0.008, 0.08, contour_line_width);
 	float contour_pixel_width = mix(0.75, 6.0, contour_line_width);
-	float contour_noise_scale = mix(0.5, 14.0, contour_wobble_scale);
-	float contour_noise_strength = mix(0.0, 0.35, contour_wobble_strength) * spacing;
+	float contour_noise_scale = mix(0.5, 14.0, wobble_scale);
+	float contour_noise_strength = mix(0.0, 0.35, wobble_strength) * spacing;
 
 	float wobble_noise = smooth_rand13(local_pos * noise_scale);
 	float wobble = (wobble_noise - 0.5) * noise_strength;

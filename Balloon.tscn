@@ -23,10 +23,8 @@ shader_parameter/wobble_scale = 1.0
 shader_parameter/wobble_strength = 1.0
 shader_parameter/contour_axis = Vector3(1, 0, 0)
 shader_parameter/contour_spacing = 0.04999999888240999
-shader_parameter/contour_line_width = 0.1890000089775
-shader_parameter/contour_distance_compensation = 0.3590000170525
-shader_parameter/contour_wobble_scale = 1.0
-shader_parameter/contour_wobble_strength = 1.0
+shader_parameter/contour_line_width = 1.0
+shader_parameter/contour_distance_compensation = 0.166000007885
 
 [sub_resource type="SphereMesh" id="SphereMesh_c03q2"]
 
