@@ -22,6 +22,7 @@ shader_parameter/outline_softness = 0.1670000079325
 shader_parameter/wobble_scale = 1.0
 shader_parameter/wobble_strength = 1.0
 shader_parameter/contour_axis = Vector3(1, 0, 0)
+shader_parameter/contour_use_uv = false
 shader_parameter/contour_spacing = 0.04999999888240999
 shader_parameter/contour_line_width = 1.0
 shader_parameter/contour_distance_compensation = 0.166000007885
