@@ -8,6 +8,7 @@ uniform sampler2D scene_normal_texture : hint_normal_roughness_texture, repeat_d
 
 uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
 uniform vec4 fill_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform sampler2D fill_texture : source_color, hint_default_white, repeat_disable, filter_linear_mipmap;
 uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
 uniform float outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform float hard_edge_width : hint_range(0.0, 1.0, 0.001) = 0.35;
@@ -123,7 +124,8 @@ void fragment() {
 	float contour_filter = smoothstep(contour_filter_start, contour_filter_end, contour_aa);
 	float filtered_contour_line = mix(contour_line, contour_coverage, contour_filter);
 
-	vec4 final_color = mix(fill_color, ink_color, outline);
+	vec4 fill_sample = texture(fill_texture, SCREEN_UV) * fill_color;
+	vec4 final_color = mix(fill_sample, ink_color, outline);
 	final_color.rgb = mix(final_color.rgb, ink_color.rgb, hard_edge_line);
 	final_color.rgb = mix(final_color.rgb, ink_color.rgb, filtered_contour_line);
 	ALBEDO = final_color.rgb;

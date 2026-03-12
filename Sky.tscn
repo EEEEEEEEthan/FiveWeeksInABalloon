@@ -3,25 +3,62 @@
 [ext_resource type="Material" uid="uid://p0wjnhqsv6f3" path="res://InkMaterial.tres" id="1_tu2sq"]
 [ext_resource type="Script" uid="uid://bme8dgn78wbc" path="res://PenInkInstance.gd" id="1_yugi5"]
 [ext_resource type="PackedScene" uid="uid://3y6gmeypd877" path="res://Balloon.tscn" id="3_xtqmq"]
+[ext_resource type="ArrayMesh" uid="uid://b8dcqdrfc6qbx" path="res://Cloud1.obj" id="4_1un0i"]
+[ext_resource type="ArrayMesh" uid="uid://cthx720qn2r8o" path="res://Cloud2.obj" id="5_uxria"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3q7nx"]
 
 [node name="Sky" type="Node3D" unique_id=1513389431]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=78830336]
-transform = Transform3D(3838.8909, 0, 0, 0, 1715.3661, 0, 0, 0, 1000, 541.346, 121.8642, -600)
-visible = false
+transform = Transform3D(8314.777, 0, 0, 0, 3715.366, 0, 0, 0, 2165.932, 541.346, 121.8642, -1513.8927)
 instance_shader_parameters/contour_axis = Vector3(0.5, 1, 0)
-instance_shader_parameters/contour_line_width = -0.035
-instance_shader_parameters/contour_spacing = 18.487
+instance_shader_parameters/contour_line_width = 5.52
+instance_shader_parameters/contour_spacing = 20.897
 mesh = SubResource("SphereMesh_3q7nx")
 surface_material_override/0 = ExtResource("1_tu2sq")
 script = ExtResource("1_yugi5")
-contour_spacing = 18.487
-contour_line_width = -0.035
+contour_spacing = 20.897
+contour_line_width = 5.52
 contour_axis = Vector3(0.5, 1, 0)
 
 [node name="Node3D" parent="." unique_id=443575708 instance=ExtResource("3_xtqmq")]
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=244866361]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69.23425, 63.545303, 122.49017)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=40802722]
+transform = Transform3D(130.18375, -31.734194, -24.292416, 24.292416, 128.56396, -37.76471, 31.734194, 31.768473, 128.56396, 69.316, 51.831, -96.018)
+instance_shader_parameters/contour_axis = Vector3(-1.855, 1.23, 0.885)
+instance_shader_parameters/contour_line_width = -0.095
+instance_shader_parameters/contour_spacing = 3.282
+mesh = ExtResource("4_1un0i")
+surface_material_override/0 = ExtResource("1_tu2sq")
+script = ExtResource("1_yugi5")
+contour_spacing = 3.282
+contour_line_width = -0.095
+contour_axis = Vector3(-1.855, 1.23, 0.885)
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=1054919266]
+transform = Transform3D(-21.450066, -15.872215, -133.5401, -81.00297, 109.46922, 0, 107.34712, 79.4327, -26.683939, 227.81116, 131.29091, -57.06218)
+instance_shader_parameters/contour_axis = Vector3(3.46, 1.23, -22.46)
+instance_shader_parameters/contour_line_width = -0.095
+instance_shader_parameters/contour_spacing = 2.017
+mesh = ExtResource("4_1un0i")
+surface_material_override/0 = ExtResource("1_tu2sq")
+script = ExtResource("1_yugi5")
+contour_spacing = 2.017
+contour_line_width = -0.095
+contour_axis = Vector3(3.46, 1.23, -22.46)
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="." unique_id=113569407]
+transform = Transform3D(109.797035, 20.14147, -77.99951, -68.54416, 92.6321, -72.56709, 42.32377, 97.76812, 84.82384, -155.016, 131.291, -55.697)
+instance_shader_parameters/contour_axis = Vector3(1.75, 1.3, 2.77)
+instance_shader_parameters/contour_line_width = -0.095
+instance_shader_parameters/contour_spacing = 2.357
+mesh = ExtResource("5_uxria")
+surface_material_override/0 = ExtResource("1_tu2sq")
+script = ExtResource("1_yugi5")
+contour_spacing = 2.357
+contour_line_width = -0.095
+contour_axis = Vector3(1.75, 1.3, 2.77)
