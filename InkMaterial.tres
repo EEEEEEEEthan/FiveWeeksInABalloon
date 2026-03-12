@@ -1,0 +1,28 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://p0wjnhqsv6f3"]
+
+[ext_resource type="Shader" uid="uid://tixonmsupji8" path="res://PenOutline.gdshader" id="1_rbqmy"]
+[ext_resource type="Shader" uid="uid://ch3hlqhjtceut" path="res://PenInk.gdshader" id="2_algsb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_outline"]
+render_priority = -1
+shader = ExtResource("1_rbqmy")
+shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
+shader_parameter/outline_width = 0.0270000012825
+shader_parameter/stroke_scale = 0.45600002166
+shader_parameter/stroke_strength = 1.0
+
+[resource]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_outline")
+shader = ExtResource("2_algsb")
+shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
+shader_parameter/fill_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 0.1310000062225
+shader_parameter/outline_softness = 0.1670000079325
+shader_parameter/wobble_scale = 1.0
+shader_parameter/wobble_strength = 1.0
+shader_parameter/contour_axis = Vector3(1, 0, 0)
+shader_parameter/contour_use_uv = false
+shader_parameter/contour_spacing = 0.04999999888240999
+shader_parameter/contour_line_width = 1.0
+shader_parameter/contour_distance_compensation = 0.166000007885

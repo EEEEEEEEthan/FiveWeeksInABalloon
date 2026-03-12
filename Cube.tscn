@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://u2fsnhrkh3ff"]
+
+[ext_resource type="Material" uid="uid://p0wjnhqsv6f3" path="res://InkMaterial.tres" id="1_k3834"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_4ibfc"]
+
+[node name="Cube" type="Node3D" unique_id=1664812996]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=783921246]
+mesh = SubResource("BoxMesh_4ibfc")
+surface_material_override/0 = ExtResource("1_k3834")
