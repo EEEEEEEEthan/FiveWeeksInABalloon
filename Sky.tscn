@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bgwr3netxi644"]
+
+[ext_resource type="Material" uid="uid://p0wjnhqsv6f3" path="res://InkMaterial.tres" id="1_tu2sq"]
+[ext_resource type="Script" uid="uid://bme8dgn78wbc" path="res://PenInkInstance.gd" id="1_yugi5"]
+[ext_resource type="PackedScene" uid="uid://3y6gmeypd877" path="res://Balloon.tscn" id="3_xtqmq"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_3q7nx"]
+
+[node name="Sky" type="Node3D" unique_id=1513389431]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=78830336]
+transform = Transform3D(3838.8909, 0, 0, 0, 1715.3661, 0, 0, 0, 1000, 541.346, 121.8642, -600)
+visible = false
+instance_shader_parameters/contour_axis = Vector3(0.5, 1, 0)
+instance_shader_parameters/contour_line_width = -0.035
+instance_shader_parameters/contour_spacing = 18.487
+mesh = SubResource("SphereMesh_3q7nx")
+surface_material_override/0 = ExtResource("1_tu2sq")
+script = ExtResource("1_yugi5")
+contour_spacing = 18.487
+contour_line_width = -0.035
+contour_axis = Vector3(0.5, 1, 0)
+
+[node name="Node3D" parent="." unique_id=443575708 instance=ExtResource("3_xtqmq")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=244866361]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69.23425, 63.545303, 122.49017)
