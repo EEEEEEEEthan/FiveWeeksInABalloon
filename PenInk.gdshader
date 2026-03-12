@@ -60,15 +60,18 @@ void fragment() {
 	vec3 n = normalize(world_normal);
 	vec3 view_dir = normalize(CAMERA_POSITION_WORLD - world_pos);
 	vec3 light_direction = pen_ink_light_direction / max(length(pen_ink_light_direction), 0.0001);
+	vec3 axis = contour_axis / max(length(contour_axis), 0.0001);
+	vec2 uv_axis = contour_axis_to_uv_axis(axis);
+	float axis_world_scale = max(length((MODEL_MATRIX * vec4(axis, 0.0)).xyz), 0.0001);
+	float contour_coord_spacing = contour_use_uv ? max(contour_spacing, 0.0001) : max(contour_spacing / axis_world_scale, 0.0001);
 	float rim = 1.0 - max(dot(n, view_dir), 0.0);
 	float softness = mix(0.002, 0.08, outline_softness);
 	float noise_scale = mix(0.5, 18.0, wobble_scale);
 	float noise_strength = mix(0.0, 0.12, wobble_strength);
-	float spacing = max(contour_spacing, 0.0001);
 	float contour_base_width = mix(0.008, 0.08, contour_line_width);
 	float contour_pixel_width = mix(0.75, 6.0, contour_line_width);
 	float contour_noise_scale = mix(0.5, 14.0, wobble_scale);
-	float contour_noise_strength = mix(0.0, 0.35, wobble_strength) * spacing;
+	float contour_noise_strength = mix(0.0, 0.35, wobble_strength) * contour_coord_spacing;
 
 	float wobble_noise = smooth_rand13(local_pos * noise_scale);
 	float wobble = (wobble_noise - 0.5) * noise_strength;
@@ -97,8 +100,6 @@ void fragment() {
 	float hard_edge_line = smoothstep(hard_edge_threshold_value, hard_edge_threshold_value + hard_edge_transition, hard_edge_signal);
 	hard_edge_line *= 1.0 - outline;
 
-	vec3 axis = contour_axis / max(length(contour_axis), 0.0001);
-	vec2 uv_axis = contour_axis_to_uv_axis(axis);
 	vec3 contour_noise_input = contour_use_uv
 		? vec3(UV * contour_noise_scale, 0.0)
 		: local_pos * contour_noise_scale;
@@ -106,7 +107,7 @@ void fragment() {
 	float contour_coord = contour_use_uv
 		? dot(UV, uv_axis) + (contour_noise - 0.5) * contour_noise_strength
 		: dot(local_pos, axis) + (contour_noise - 0.5) * contour_noise_strength;
-	float contour_phase = contour_coord / spacing;
+	float contour_phase = contour_coord / contour_coord_spacing;
 	float contour_distance = abs(fract(contour_phase + 0.5) - 0.5);
 	float contour_aa = max(fwidth(contour_phase), 0.001);
 	float compensated_width = contour_aa * contour_pixel_width;
