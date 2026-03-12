@@ -22,6 +22,8 @@ instance uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
 uniform float contour_far_spacing_compensation : hint_range(0.0, 1.0, 0.001) = 0.7;
 uniform sampler2D contour_light_threshold_curve : hint_default_white;
+uniform sampler2D model_texture : source_color, hint_default_white, repeat_enable, filter_linear;
+uniform float contour_texture_weight_influence = 0.5;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
@@ -119,6 +121,9 @@ void fragment() {
 	float contour_aa = max(fwidth(contour_phase), 0.001);
 	float compensated_width = contour_aa * contour_pixel_width;
 	float line_half_width = mix(contour_base_width, compensated_width, contour_distance_compensation);
+	float model_gray = dot(texture(model_texture, UV).rgb, vec3(0.299, 0.587, 0.114));
+	float weight_range = 1.0 + contour_texture_weight_influence * 10.0;
+	line_half_width *= mix(weight_range, 1.0 / weight_range, pow(model_gray, 0.01));
 	float signed_light_alignment = dot(n, -light_direction);
 	float surface_light = signed_light_alignment * 0.5 + 0.5;
 	float curve_contour_threshold = texture(contour_light_threshold_curve, vec2(clamp(surface_light, 0.0, 1.0), 0.5)).r;
