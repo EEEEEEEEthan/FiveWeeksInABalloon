@@ -14,11 +14,11 @@ shader_parameter/stroke_scale = 1.0
 shader_parameter/stroke_strength = 1.0
 
 [sub_resource type="Curve" id="Curve_rbqmy"]
-_data = [Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.4794872, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.4794872, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.4794872), 0.0, 0.0, 0, 0]
 point_count = 3
-point_0/position = Vector2(1e-05, 1)
+point_0/position = Vector2(0, 1)
 point_1/position = Vector2(0.4794872, 1)
-point_2/position = Vector2(1, 0)
+point_2/position = Vector2(1, 0.4794872)
 
 [sub_resource type="CurveTexture" id="CurveTexture_algsb"]
 curve = SubResource("Curve_rbqmy")
