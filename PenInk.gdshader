@@ -16,6 +16,7 @@ uniform float hard_edge_threshold : hint_range(0.001, 1.0, 0.001) = 0.18;
 uniform float wobble_scale : hint_range(0.001, 1.0, 0.001) = 0.4;
 uniform float wobble_strength : hint_range(0.001, 1.0, 0.001) = 0.2;
 instance uniform vec3 contour_axis = vec3(0.0, 1.0, 0.0);
+instance uniform bool contour_axis_world_space = true;
 uniform bool contour_use_uv = false;
 instance uniform float contour_spacing : hint_range(0.001, 10.0, 0.001) = 0.22;
 instance uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
@@ -65,7 +66,7 @@ void fragment() {
 	vec3 light_direction = pen_ink_light_direction / max(length(pen_ink_light_direction), 0.0001);
 	vec3 axis = contour_axis / max(length(contour_axis), 0.0001);
 	vec2 uv_axis = contour_axis_to_uv_axis(axis);
-	float axis_world_scale = max(length((MODEL_MATRIX * vec4(axis, 0.0)).xyz), 0.0001);
+	float axis_world_scale = contour_axis_world_space ? 1.0 : max(length((MODEL_MATRIX * vec4(axis, 0.0)).xyz), 0.0001);
 	float contour_coord_spacing = contour_use_uv ? max(contour_spacing, 0.0001) : max(contour_spacing / axis_world_scale, 0.0001);
 	float rim = 1.0 - max(dot(n, view_dir), 0.0);
 	float softness = mix(0.002, 0.08, outline_softness);
@@ -113,9 +114,10 @@ void fragment() {
 		? vec3(UV * contour_noise_scale, 0.0)
 		: local_pos * contour_noise_scale;
 	float contour_noise = smooth_fbm13(contour_noise_input + vec3(9.3, 2.1, 5.7));
+	vec3 contour_pos = contour_axis_world_space ? world_pos : local_pos;
 	float contour_coord = contour_use_uv
 		? dot(UV, uv_axis) + (contour_noise - 0.5) * contour_noise_strength
-		: dot(local_pos, axis) + (contour_noise - 0.5) * contour_noise_strength;
+		: dot(contour_pos, axis) + (contour_noise - 0.5) * contour_noise_strength;
 	float contour_phase = contour_coord / contour_coord_spacing;
 	float contour_distance = abs(fract(contour_phase + 0.5) - 0.5);
 	float contour_aa = max(fwidth(contour_phase), 0.001);
