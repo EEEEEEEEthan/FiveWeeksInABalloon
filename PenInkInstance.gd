@@ -4,7 +4,7 @@ extends GeometryInstance3D
 @export var outline_width := 0.18
 @export var outline_softness := 0.2
 @export var contour_spacing := 0.22
-@export var contour_line_width := 0.14
+@export_range(0.0, 1.0, 0.001) var contour_line_width := 0.14
 @export var contour_axis := Vector3(0.0, 1.0, 0.0)
 @export var contour_axis_world_space := true
 
