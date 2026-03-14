@@ -4,7 +4,7 @@ render_mode unshaded, cull_front, depth_prepass_alpha;
 #include "res://ShaderRandom.gdshaderinc"
 
 uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
-uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.22;
+uniform float outline_width : hint_range(0.0, 1.0, 0.001) = 0.22;
 uniform float stroke_scale : hint_range(0.001, 1.0, 0.001) = 0.45;
 uniform float stroke_strength : hint_range(0.001, 1.0, 0.001) = 0.28;
 
@@ -21,7 +21,7 @@ float brush_noise(vec3 p) {
 }
 
 void vertex() {
-	float width = mix(0.002, 0.09, outline_width);
+	float width = mix(0.002, 0.09, outline_width) * outline_width;
 	local_pos = VERTEX;
 	relative_pos = normalize(VERTEX);
 	world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
