@@ -108,7 +108,9 @@ void fragment() {
 	float outline_wobble = wobble * 0.35;
 	float edge_start = 1.0 - outline_width + outline_wobble;
 	float outline_transition = max(softness + rim_aa * 1.5, 0.001);
-	float outline = smoothstep(edge_start - outline_transition, edge_start, rim);
+	float outline_raw = smoothstep(edge_start - outline_transition, edge_start, rim);
+	float outline_visibility = smoothstep(0.0, 0.008, outline_width);
+	float outline = outline_raw * outline_visibility;
 	float hard_edge_line = 0.0;
 	if (hard_edge_width > 0.0 && hard_edge_smooth_range.y > hard_edge_smooth_range.x) {
 		vec2 hard_edge_offset = hard_edge_width / VIEWPORT_SIZE;
