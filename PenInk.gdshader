@@ -12,7 +12,8 @@ uniform sampler2D fill_texture : source_color, hint_default_white, repeat_disabl
 uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
 uniform float outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform float hard_edge_width : hint_range(0.0, 1.0, 0.001) = 0.35;
-uniform float hard_edge_threshold : hint_range(0.001, 1.0, 0.001) = 0.18;
+uniform vec2 hard_edge_smooth_range = vec2(0.0, 1.0);
+uniform float hard_edge_softness : hint_range(0.1, 3.0, 0.01) = 0.4;
 uniform float wobble_scale : hint_range(0.001, 1.0, 0.001) = 0.4;
 uniform float wobble_strength : hint_range(0.001, 1.0, 0.001) = 0.2;
 instance uniform vec3 contour_axis = vec3(0.0, 1.0, 0.0);
@@ -54,6 +55,30 @@ vec3 sample_scene_normal(vec2 screen_uv) {
 	return normalize(encoded_normal * 2.0 - 1.0);
 }
 
+// FrontOutline 做法：对法线 luminance 做 Sobel，幅值更平滑、过渡带更宽
+const vec3 LUMA = vec3(0.2125, 0.7154, 0.0721);
+const mat3 SOBEL_X = mat3(vec3(1.0, 2.0, 1.0), vec3(0.0, 0.0, 0.0), vec3(-1.0, -2.0, -1.0));
+const mat3 SOBEL_Y = mat3(vec3(1.0, 0.0, -1.0), vec3(2.0, 0.0, -2.0), vec3(1.0, 0.0, -1.0));
+
+float sobel_normal_luma(vec2 uv, vec2 offset) {
+	float n00 = dot(texture(scene_normal_texture, uv + offset * vec2(-1.0, -1.0)).rgb, LUMA);
+	float n01 = dot(texture(scene_normal_texture, uv + offset * vec2(-1.0,  0.0)).rgb, LUMA);
+	float n02 = dot(texture(scene_normal_texture, uv + offset * vec2(-1.0,  1.0)).rgb, LUMA);
+	float n10 = dot(texture(scene_normal_texture, uv + offset * vec2( 0.0, -1.0)).rgb, LUMA);
+	float n11 = dot(texture(scene_normal_texture, uv + offset * vec2( 0.0,  0.0)).rgb, LUMA);
+	float n12 = dot(texture(scene_normal_texture, uv + offset * vec2( 0.0,  1.0)).rgb, LUMA);
+	float n20 = dot(texture(scene_normal_texture, uv + offset * vec2( 1.0, -1.0)).rgb, LUMA);
+	float n21 = dot(texture(scene_normal_texture, uv + offset * vec2( 1.0,  0.0)).rgb, LUMA);
+	float n22 = dot(texture(scene_normal_texture, uv + offset * vec2( 1.0,  1.0)).rgb, LUMA);
+	float gx = SOBEL_X[0][0]*n00 + SOBEL_X[1][0]*n10 + SOBEL_X[2][0]*n20
+		+ SOBEL_X[0][1]*n01 + SOBEL_X[1][1]*n11 + SOBEL_X[2][1]*n21
+		+ SOBEL_X[0][2]*n02 + SOBEL_X[1][2]*n12 + SOBEL_X[2][2]*n22;
+	float gy = SOBEL_Y[0][0]*n00 + SOBEL_Y[1][0]*n10 + SOBEL_Y[2][0]*n20
+		+ SOBEL_Y[0][1]*n01 + SOBEL_Y[1][1]*n11 + SOBEL_Y[2][1]*n21
+		+ SOBEL_Y[0][2]*n02 + SOBEL_Y[1][2]*n12 + SOBEL_Y[2][2]*n22;
+	return sqrt(gx * gx + gy * gy);
+}
+
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
@@ -85,28 +110,20 @@ void fragment() {
 	float outline_transition = max(softness + rim_aa * 1.5, 0.001);
 	float outline = smoothstep(edge_start - outline_transition, edge_start, rim);
 	float hard_edge_line = 0.0;
-	if (hard_edge_width > 0.0 && hard_edge_threshold < 1.0) {
-		float hard_edge_wobble_noise = smooth_fbm13(local_pos * contour_noise_scale + vec3(4.7, 8.1, 1.3));
-		float hard_edge_wobble = (hard_edge_wobble_noise - 0.5) * mix(0.0, 0.04, wobble_strength);
-		vec2 screen_pixel = 1.0 / VIEWPORT_SIZE;
-		float hard_edge_radius = max(mix(0.75, 2.5, hard_edge_width) + hard_edge_wobble * 2.0, 0.25);
-		vec2 hard_edge_offset = screen_pixel * hard_edge_radius;
-		vec3 normal_px = sample_scene_normal(SCREEN_UV + vec2(hard_edge_offset.x, 0.0));
-		vec3 normal_nx = sample_scene_normal(SCREEN_UV - vec2(hard_edge_offset.x, 0.0));
-		vec3 normal_py = sample_scene_normal(SCREEN_UV + vec2(0.0, hard_edge_offset.y));
-		vec3 normal_ny = sample_scene_normal(SCREEN_UV - vec2(0.0, hard_edge_offset.y));
-		vec3 normal_pp = sample_scene_normal(SCREEN_UV + hard_edge_offset);
-		vec3 normal_nn = sample_scene_normal(SCREEN_UV - hard_edge_offset);
-		vec3 normal_pn = sample_scene_normal(SCREEN_UV + vec2(hard_edge_offset.x, -hard_edge_offset.y));
-		vec3 normal_np = sample_scene_normal(SCREEN_UV + vec2(-hard_edge_offset.x, hard_edge_offset.y));
-		float hard_edge_signal = 0.0;
-		hard_edge_signal = max(hard_edge_signal, length(normal_px - normal_nx));
-		hard_edge_signal = max(hard_edge_signal, length(normal_py - normal_ny));
-		hard_edge_signal = max(hard_edge_signal, length(normal_pp - normal_nn));
-		hard_edge_signal = max(hard_edge_signal, length(normal_pn - normal_np));
-		float hard_edge_threshold_value = max(hard_edge_threshold + hard_edge_wobble * 0.35, 0.0001);
-		float hard_edge_transition = max(hard_edge_threshold_value * 0.18 + fwidth(hard_edge_signal) * 1.5, 0.0001);
-		hard_edge_line = smoothstep(hard_edge_threshold_value, hard_edge_threshold_value + hard_edge_transition, hard_edge_signal);
+	if (hard_edge_width > 0.0 && hard_edge_smooth_range.y > hard_edge_smooth_range.x) {
+		vec2 hard_edge_offset = hard_edge_width / VIEWPORT_SIZE;
+		float edge_signal = sobel_normal_luma(SCREEN_UV, hard_edge_offset);
+		float scaled = edge_signal * hard_edge_softness;
+		float edge_fw = max(fwidth(scaled), 0.001);
+		float low = hard_edge_smooth_range.x;
+		float high = hard_edge_smooth_range.y;
+		float min_span = max(edge_fw * 2.0, 0.02);
+		if (high - low < min_span) {
+			float mid = (low + high) * 0.5;
+			low = mid - min_span * 0.5;
+			high = mid + min_span * 0.5;
+		}
+		hard_edge_line = smoothstep(low, high, scaled);
 		hard_edge_line *= 1.0 - outline;
 	}
 

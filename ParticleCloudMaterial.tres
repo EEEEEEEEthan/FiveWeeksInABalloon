@@ -4,11 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://bo0y4souq5lk0" path="res://Paper.jpg" id="2_tex"]
 
 [sub_resource type="Curve" id="Curve_contour"]
-_data = [Vector2(0.48, 1), 0.0, 0.0, 0, 0, Vector2(0.48, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.48), 0.0, 0.0, 0, 0]
+_data = [Vector2(0.14921464, 1), 0.0, 0.0, 0, 0, Vector2(0.565445, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
-point_0/position = Vector2(0.48, 1)
-point_1/position = Vector2(0.48, 1)
-point_2/position = Vector2(1, 0.48)
+point_0/position = Vector2(0.14921464, 1)
+point_1/position = Vector2(0.565445, 0)
+point_2/position = Vector2(1, 0)
 
 [sub_resource type="CurveTexture" id="CurveTexture_contour"]
 curve = SubResource("Curve_contour")
@@ -28,8 +28,8 @@ shader_parameter/wobble_strength = 1.0
 shader_parameter/contour_axis = Vector3(1.32, 1, 0)
 shader_parameter/contour_axis_world_space = true
 shader_parameter/contour_use_uv = false
-shader_parameter/contour_spacing = 0.0010000000475
-shader_parameter/contour_line_width = 0.0
+shader_parameter/contour_spacing = 1.3870000658825
+shader_parameter/contour_line_width = 1.0
 shader_parameter/contour_distance_compensation = 0.0
 shader_parameter/contour_far_spacing_compensation = 0.5
 shader_parameter/contour_light_threshold_curve = SubResource("CurveTexture_contour")
