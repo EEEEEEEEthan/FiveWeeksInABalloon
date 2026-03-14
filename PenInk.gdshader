@@ -22,7 +22,6 @@ uniform bool contour_use_uv = false;
 instance uniform float contour_spacing : hint_range(0.001, 10.0, 0.001) = 0.22;
 instance uniform float contour_line_width : hint_range(0.0, 1.0, 0.001) = 0.14;
 uniform float contour_distance_compensation : hint_range(0.0, 1.0, 0.001) = 0.82;
-uniform float contour_far_spacing_compensation : hint_range(0.0, 1.0, 0.001) = 0.7;
 uniform sampler2D contour_light_threshold_curve : hint_default_white;
 uniform sampler2D model_texture : source_color, hint_default_white, repeat_enable, filter_linear;
 uniform float contour_texture_weight_influence = 0.5;
@@ -151,8 +150,8 @@ void fragment() {
 	float light_adjusted_line_half_width = mix(-contour_aa, line_half_width, curve_contour_threshold);
 	float contour_line = 1.0 - smoothstep(light_adjusted_line_half_width, light_adjusted_line_half_width + contour_aa, contour_distance);
 	float contour_coverage = clamp(max(light_adjusted_line_half_width, 0.0) * 2.0, 0.0, 1.0);
-	float contour_filter_start = mix(0.55, 0.25, contour_far_spacing_compensation);
-	float contour_filter_end = mix(1.6, 0.75, contour_far_spacing_compensation);
+	float contour_filter_start = mix(0.55, 0.25, 0.7);
+	float contour_filter_end = mix(1.6, 0.75, 0.7);
 	float contour_filter = smoothstep(contour_filter_start, contour_filter_end, contour_aa);
 	float filtered_contour_line = mix(contour_line, contour_coverage, contour_filter);
 

@@ -9,14 +9,15 @@
 render_priority = 0
 shader = ExtResource("1_rbqmy")
 shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
+shader_parameter/outer_outline_width = 0.001
 shader_parameter/stroke_scale = 1.0
 shader_parameter/stroke_strength = 1.0
 
 [sub_resource type="Curve" id="Curve_rbqmy"]
-_data = [Vector2(0, 0.93076926), 0.0, 0.0, 0, 0, Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.93076926, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0, 0.93076926), 0.0, 0.0, 0, 0, Vector2(0.93076926, 0), 0.0, 0.0, 0, 0]
 point_count = 3
-point_0/position = Vector2(0, 0.93076926)
-point_1/position = Vector2(0, 1)
+point_0/position = Vector2(0, 1)
+point_1/position = Vector2(0, 0.93076926)
 point_2/position = Vector2(0.93076926, 0)
 
 [sub_resource type="CurveTexture" id="CurveTexture_algsb"]
@@ -36,7 +37,6 @@ shader_parameter/wobble_scale = 1.0
 shader_parameter/wobble_strength = 1.0
 shader_parameter/contour_use_uv = false
 shader_parameter/contour_distance_compensation = 0.2000000095
-shader_parameter/contour_far_spacing_compensation = 0.0
 shader_parameter/contour_light_threshold_curve = SubResource("CurveTexture_algsb")
 shader_parameter/model_texture = ExtResource("4_lsp85")
 shader_parameter/contour_texture_weight_influence = 100.0
