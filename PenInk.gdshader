@@ -97,8 +97,8 @@ void fragment() {
 	float softness = mix(0.002, 0.08, outline_softness);
 	float noise_scale = mix(0.5, 18.0, wobble_scale);
 	float noise_strength = mix(0.0, 0.12, wobble_strength);
-	float contour_base_width = mix(0.008, 0.08, contour_line_width);
-	float contour_pixel_width = mix(0.75, 6.0, contour_line_width);
+	float contour_base_width = mix(0.0, 0.08, contour_line_width);
+	float contour_pixel_width = mix(0.0, 6.0, contour_line_width);
 	float contour_noise_scale = mix(0.5, 14.0, wobble_scale);
 	float contour_noise_strength = mix(0.0, 0.35, wobble_strength) * contour_coord_spacing;
 
@@ -157,7 +157,8 @@ void fragment() {
 	vec4 fill_sample = texture(fill_texture, SCREEN_UV) * fill_color;
 	vec4 final_color = mix(fill_sample, ink_color, outline);
 	final_color.rgb = mix(final_color.rgb, ink_color.rgb, hard_edge_line);
-	final_color.rgb = mix(final_color.rgb, ink_color.rgb, filtered_contour_line);
+	float contour_visibility = smoothstep(0.0, 0.008, contour_line_width);
+	final_color.rgb = mix(final_color.rgb, ink_color.rgb, filtered_contour_line * contour_visibility);
 	ALBEDO = final_color.rgb;
 	ALPHA = final_color.a;
 }
