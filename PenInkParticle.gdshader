@@ -9,8 +9,8 @@ uniform sampler2D scene_normal_texture : hint_normal_roughness_texture, repeat_d
 uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
 uniform vec4 fill_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform sampler2D fill_texture : source_color, hint_default_white, repeat_disable, filter_linear_mipmap;
-uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
-uniform float outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
+uniform float inner_outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
+uniform float inner_outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform float hard_edge_width : hint_range(0.0, 1.0, 0.001) = 0.35;
 uniform float hard_edge_threshold : hint_range(0.001, 1.0, 0.001) = 0.18;
 uniform float wobble_scale : hint_range(0.001, 1.0, 0.001) = 0.4;
@@ -69,7 +69,7 @@ void fragment() {
 	float axis_world_scale = contour_axis_world_space ? 1.0 : max(length((MODEL_MATRIX * vec4(axis, 0.0)).xyz), 0.0001);
 	float contour_coord_spacing = contour_use_uv ? max(contour_spacing, 0.0001) : max(contour_spacing / axis_world_scale, 0.0001);
 	float rim = 1.0 - max(dot(n, view_dir), 0.0);
-	float softness = mix(0.002, 0.08, outline_softness);
+	float softness = mix(0.002, 0.08, inner_outline_softness);
 	float noise_scale = mix(0.5, 18.0, wobble_scale);
 	float noise_strength = mix(0.0, 0.12, wobble_strength);
 	float contour_base_width = mix(0.008, 0.08, contour_line_width);
@@ -81,7 +81,7 @@ void fragment() {
 	float wobble = (wobble_noise - 0.5) * noise_strength;
 	float rim_aa = max(fwidth(rim), 0.001);
 	float outline_wobble = wobble * 0.35;
-	float edge_start = 1.0 - outline_width + outline_wobble;
+	float edge_start = 1.0 - inner_outline_width + outline_wobble;
 	float outline_transition = max(softness + rim_aa * 1.5, 0.001);
 	float outline = smoothstep(edge_start - outline_transition, edge_start, rim);
 	float hard_edge_line = 0.0;

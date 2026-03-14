@@ -1,15 +1,20 @@
 @tool
 extends GeometryInstance3D
 
-@export_range(0.0, 1.0, 0.001) var outline_width := 0.18
-@export var outline_softness := 0.2
+@export_group("外轮廓")
+@export_range(0.0, 1.0, 0.001) var outer_outline_width := 0.001
+@export_group("内轮廓")
+@export_range(0.0, 1.0, 0.001) var inner_outline_width := 0.18
+@export_range(0.0, 1.0, 0.001) var inner_outline_softness := 0.2
+@export_group("等高线")
 @export var contour_spacing := 0.22
 @export_range(0.0, 1.0, 0.001) var contour_line_width := 0.14
 @export var contour_axis := Vector3(0.0, 1.0, 0.0)
 @export var contour_axis_world_space := true
 
-var _last_applied_outline_width := -1.0
-var _last_applied_outline_softness := -1.0
+var _last_applied_outer_outline_width := -1.0
+var _last_applied_inner_outline_width := -1.0
+var _last_applied_inner_outline_softness := -1.0
 var _last_applied_contour_spacing := -1.0
 var _last_applied_contour_line_width := -1.0
 var _last_applied_contour_axis := Vector3.INF
@@ -29,16 +34,31 @@ func _process(_delta: float) -> void:
 
 
 func _apply_outline(force: bool) -> void:
-	var width_changed := not is_equal_approx(outline_width, _last_applied_outline_width)
-	var softness_changed := not is_equal_approx(outline_softness, _last_applied_outline_softness)
-	if not force and not width_changed and not softness_changed:
+	var outer_changed := not is_equal_approx(outer_outline_width, _last_applied_outer_outline_width)
+	var inner_width_changed := not is_equal_approx(inner_outline_width, _last_applied_inner_outline_width)
+	var inner_softness_changed := not is_equal_approx(inner_outline_softness, _last_applied_inner_outline_softness)
+	if not force and not outer_changed and not inner_width_changed and not inner_softness_changed:
 		_apply_contour_spacing(false)
 		return
 
-	_last_applied_outline_width = outline_width
-	_last_applied_outline_softness = outline_softness
-	set_instance_shader_parameter(&"outline_width", outline_width)
-	set_instance_shader_parameter(&"outline_softness", outline_softness)
+	_last_applied_outer_outline_width = outer_outline_width
+	_last_applied_inner_outline_width = inner_outline_width
+	_last_applied_inner_outline_softness = inner_outline_softness
+
+	# next_pass 材质收不到 instance 参数，外轮廓通过材质 uniform 设置
+	if force or outer_changed:
+		var mat := get_material_override()
+		if mat:
+			mat = mat.duplicate()
+			var next_pass := mat.get_next_pass()
+			if next_pass:
+				next_pass = next_pass.duplicate()
+				next_pass.set_shader_parameter(&"outer_outline_width", outer_outline_width)
+				mat.next_pass = next_pass
+			set_material_override(mat)
+
+	set_instance_shader_parameter(&"inner_outline_width", inner_outline_width)
+	set_instance_shader_parameter(&"inner_outline_softness", inner_outline_softness)
 	_apply_contour_spacing(force)
 
 
