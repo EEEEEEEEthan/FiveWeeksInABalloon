@@ -1,28 +1,30 @@
 [gd_scene format=4 uid="uid://uhi8w7dk234y"]
 
 [ext_resource type="PackedScene" uid="uid://bgwr3netxi644" path="res://Sky.tscn" id="1_ckbho"]
+[ext_resource type="Script" uid="uid://cl3ubil4gavdv" path="res://Book.gd" id="2_book"]
 
 [sub_resource type="Shader" id="Shader_d1o3a"]
 code = "shader_type spatial;
 
+uniform sampler2D viewport_tex;
+
 void vertex() {
-	// Called for every vertex the material is visible on.
 }
 
 void fragment() {
-	// Called for every pixel the material is visible on.
-	ALBEDO = vec3(UV.r, UV.g, 0.0);
+	// 用书页 UV 采样 SubViewport 渲染的 sky，V 需翻转与视口一致
+	vec2 uv = vec2(UV.x, 1.0 - UV.y);
+	ALBEDO = texture(viewport_tex, uv).rgb;
 }
-
-//void light() {
-//	// Called for every pixel for every light affecting the material.
-//	// Uncomment to replace the default light processing function with this one.
-//}
 "
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_el5v3"]
+viewport_path = NodePath("book content/SubViewport")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ckbho"]
 render_priority = 0
 shader = SubResource("Shader_d1o3a")
+shader_parameter/viewport_tex = SubResource("ViewportTexture_el5v3")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e1go6"]
 resource_name = "altesBuch-haupttext"
@@ -156,6 +158,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_c3ixi")
 
 [node name="Book" type="Node3D" unique_id=334929203]
+script = ExtResource("2_book")
 
 [node name="book content" type="MeshInstance3D" parent="." unique_id=1746655370]
 transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 1.2613201, 0.3429036, 0.11045289)
@@ -163,6 +166,7 @@ material_override = SubResource("ShaderMaterial_ckbho")
 mesh = SubResource("ArrayMesh_0ioph")
 
 [node name="SubViewport" type="SubViewport" parent="book content" unique_id=1490214709]
+own_world_3d = true
 
 [node name="Sky" parent="book content/SubViewport" unique_id=979080712 instance=ExtResource("1_ckbho")]
 
