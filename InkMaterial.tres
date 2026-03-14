@@ -14,9 +14,9 @@ shader_parameter/stroke_scale = 1.0
 shader_parameter/stroke_strength = 1.0
 
 [sub_resource type="Curve" id="Curve_rbqmy"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0, 0.93076926), 0.0, 0.0, 0, 0, Vector2(0.93076926, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.93076926), 0.0, 0.0, 0, 0, Vector2(0, 0.93076926), 0.0, 0.0, 0, 0, Vector2(0.93076926, 0), 0.0, 0.0, 0, 0]
 point_count = 3
-point_0/position = Vector2(0, 1)
+point_0/position = Vector2(0, 0.93076926)
 point_1/position = Vector2(0, 0.93076926)
 point_2/position = Vector2(0.93076926, 0)
 

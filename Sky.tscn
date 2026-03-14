@@ -10,7 +10,7 @@
 
 [sub_resource type="SphereMesh" id="SphereMesh_3q7nx"]
 
-[node name="Sky" type="Node3D" unique_id=1513389431]
+[node name="Sky" type="Node3D" unique_id=979080712]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=78830336]
 transform = Transform3D(8372.094, 0, 0, 0, 4734.353, 0, 0, 0, 2180.863, 541.346, 464.77844, -1513.893)
@@ -32,7 +32,9 @@ transform = Transform3D(-0.20632562, 0, -0.98359275, 0, 1.005, 0, 0.98359275, 0,
 max_drift_range = 1.0
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=244866361]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.39935, 49.693558, 103.94774)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.271072, 64.88607, 103.94774)
+visible = false
+current = true
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=40802722]
 transform = Transform3D(127.495636, 7.6948504, -47.22954, -30.147953, 117.29468, -62.273884, 37.16101, 68.758446, 111.51818, 27.824959, 110.25292, -96.018)
