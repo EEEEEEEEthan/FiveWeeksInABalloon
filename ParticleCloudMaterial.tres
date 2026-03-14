@@ -1,0 +1,36 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://chy45n4jg1ucm"]
+
+[ext_resource type="Shader" uid="uid://65f1s0edcbx7" path="res://PenInkParticle.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://bo0y4souq5lk0" path="res://Paper.jpg" id="2_tex"]
+
+[sub_resource type="Curve" id="Curve_contour"]
+_data = [Vector2(0.48, 1), 0.0, 0.0, 0, 0, Vector2(0.48, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.48), 0.0, 0.0, 0, 0]
+point_count = 3
+point_0/position = Vector2(0.48, 1)
+point_1/position = Vector2(0.48, 1)
+point_2/position = Vector2(1, 0.48)
+
+[sub_resource type="CurveTexture" id="CurveTexture_contour"]
+curve = SubResource("Curve_contour")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/ink_color = Color(0.06, 0.07, 0.1, 1)
+shader_parameter/fill_color = Color(1, 1, 1, 1)
+shader_parameter/fill_texture = ExtResource("2_tex")
+shader_parameter/outline_width = 0.0010000000475
+shader_parameter/outline_softness = 1.0
+shader_parameter/hard_edge_width = 0.0
+shader_parameter/hard_edge_threshold = 1.0
+shader_parameter/wobble_scale = 0.9850000467875
+shader_parameter/wobble_strength = 1.0
+shader_parameter/contour_axis = Vector3(1.32, 1, 0)
+shader_parameter/contour_axis_world_space = true
+shader_parameter/contour_use_uv = false
+shader_parameter/contour_spacing = 0.0010000000475
+shader_parameter/contour_line_width = 0.0
+shader_parameter/contour_distance_compensation = 0.0
+shader_parameter/contour_far_spacing_compensation = 0.5
+shader_parameter/contour_light_threshold_curve = SubResource("CurveTexture_contour")
+shader_parameter/contour_texture_weight_influence = 0.5

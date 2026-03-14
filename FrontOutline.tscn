@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://dts6plg3gc8ce"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wotig"]
+
+[sub_resource type="Shader" id="Shader_wotig"]
+code = "shader_type spatial;
+render_mode unshaded, blend_mix, depth_prepass_alpha, cull_back;
+
+uniform sampler2D scene_normal_texture : hint_normal_roughness_texture, repeat_disable, filter_linear;
+uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
+uniform float hard_edge_width : hint_range(0.0, 1.0, 0.001) = 0.35;
+uniform vec2 smooth_range = vec2(0.0, 1.0);
+uniform float edge_softness : hint_range(0.1, 3.0, 0.01) = 0.4;
+
+// Moebius 做法：对法线 luminance 做 Sobel，幅值更平滑、过渡带更宽
+const vec3 LUMA = vec3(0.2125, 0.7154, 0.0721);
+const mat3 SOBEL_X = mat3(vec3(1.0, 2.0, 1.0), vec3(0.0, 0.0, 0.0), vec3(-1.0, -2.0, -1.0));
+const mat3 SOBEL_Y = mat3(vec3(1.0, 0.0, -1.0), vec3(2.0, 0.0, -2.0), vec3(1.0, 0.0, -1.0));
+
+float sobel_normal(vec2 uv, vec2 offset) {
+	float n00 = dot(texture(scene_normal_texture, uv + offset * vec2(-1.0, -1.0)).rgb, LUMA);
+	float n01 = dot(texture(scene_normal_texture, uv + offset * vec2(-1.0,  0.0)).rgb, LUMA);
+	float n02 = dot(texture(scene_normal_texture, uv + offset * vec2(-1.0,  1.0)).rgb, LUMA);
+	float n10 = dot(texture(scene_normal_texture, uv + offset * vec2( 0.0, -1.0)).rgb, LUMA);
+	float n11 = dot(texture(scene_normal_texture, uv + offset * vec2( 0.0,  0.0)).rgb, LUMA);
+	float n12 = dot(texture(scene_normal_texture, uv + offset * vec2( 0.0,  1.0)).rgb, LUMA);
+	float n20 = dot(texture(scene_normal_texture, uv + offset * vec2( 1.0, -1.0)).rgb, LUMA);
+	float n21 = dot(texture(scene_normal_texture, uv + offset * vec2( 1.0,  0.0)).rgb, LUMA);
+	float n22 = dot(texture(scene_normal_texture, uv + offset * vec2( 1.0,  1.0)).rgb, LUMA);
+	float gx = SOBEL_X[0][0]*n00 + SOBEL_X[1][0]*n10 + SOBEL_X[2][0]*n20
+		+ SOBEL_X[0][1]*n01 + SOBEL_X[1][1]*n11 + SOBEL_X[2][1]*n21
+		+ SOBEL_X[0][2]*n02 + SOBEL_X[1][2]*n12 + SOBEL_X[2][2]*n22;
+	float gy = SOBEL_Y[0][0]*n00 + SOBEL_Y[1][0]*n10 + SOBEL_Y[2][0]*n20
+		+ SOBEL_Y[0][1]*n01 + SOBEL_Y[1][1]*n11 + SOBEL_Y[2][1]*n21
+		+ SOBEL_Y[0][2]*n02 + SOBEL_Y[1][2]*n12 + SOBEL_Y[2][2]*n22;
+	return sqrt(gx * gx + gy * gy);
+}
+
+void fragment() {
+	vec2 offset = hard_edge_width / VIEWPORT_SIZE;
+	float edge_signal = sobel_normal(SCREEN_UV, offset);
+	// 缩小边缘信号使 0~1 过渡落在更宽像素带；fwidth 保底抗锯齿（参考 Moebius）
+	float scaled = edge_signal * edge_softness;
+	float fw = fwidth(scaled);
+	float low = smooth_range.x;
+	float high = smooth_range.y;
+	float min_span = max(fw * 2.0, 0.02);
+	if (high - low < min_span) {
+		float mid = (low + high) * 0.5;
+		low = mid - min_span * 0.5;
+		high = mid + min_span * 0.5;
+	}
+	float hard_edge_line = smoothstep(low, high, scaled);
+	vec4 final_color = mix(vec4(1.0, 1.0, 1.0, 1.0), ink_color, hard_edge_line);
+	ALBEDO = final_color.rgb;
+	ALPHA = final_color.a;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bqw6r"]
+render_priority = 0
+shader = SubResource("Shader_wotig")
+shader_parameter/ink_color = Color(0.05, 0.06, 0.08, 1)
+shader_parameter/hard_edge_width = 1.0
+shader_parameter/smooth_range = Vector2(0, 1)
+shader_parameter/edge_softness = 0.69999998807892
+
+[node name="Hatching" type="Node3D" unique_id=223074643]
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=295182974]
+mesh = SubResource("CylinderMesh_wotig")
+surface_material_override/0 = SubResource("ShaderMaterial_bqw6r")

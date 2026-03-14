@@ -6,6 +6,7 @@
 [ext_resource type="ArrayMesh" uid="uid://b8dcqdrfc6qbx" path="res://Cloud1.obj" id="4_1un0i"]
 [ext_resource type="ArrayMesh" uid="uid://cthx720qn2r8o" path="res://Cloud2.obj" id="5_uxria"]
 [ext_resource type="ArrayMesh" uid="uid://bocvmck0qoxov" path="res://Mountain.obj" id="6_4vetl"]
+[ext_resource type="PackedScene" path="res://ParticleCloud.tscn" id="7_m84gs"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3q7nx"]
 
@@ -14,6 +15,7 @@
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=78830336]
 transform = Transform3D(8372.094, 0, 0, 0, 4734.353, 0, 0, 0, 2180.863, 541.346, 464.77844, -1513.893)
 instance_shader_parameters/contour_axis = Vector3(-0.865, 0.29, 0)
+instance_shader_parameters/contour_axis_world_space = true
 instance_shader_parameters/contour_line_width = -2.79
 instance_shader_parameters/contour_spacing = 10.802
 mesh = SubResource("SphereMesh_3q7nx")
@@ -22,7 +24,6 @@ script = ExtResource("1_yugi5")
 contour_spacing = 10.802
 contour_line_width = -2.79
 contour_axis = Vector3(-0.865, 0.29, 0)
-contour_axis_world_space = null
 
 [node name="Node3D" parent="." unique_id=443575708 instance=ExtResource("3_xtqmq")]
 transform = Transform3D(-0.20632562, 0, -0.98359275, 0, 1.005, 0, 0.98359275, 0, -0.20632562, 0, 25.39495, 24.033085)
@@ -48,6 +49,7 @@ contour_axis = Vector3(-1.855, 1.155, 0.885)
 transform = Transform3D(-21.450066, -15.872215, -133.5401, -81.00297, 109.46922, 0, 107.34712, 79.4327, -26.683939, 218.17072, 91.46796, -57.06218)
 visible = false
 instance_shader_parameters/contour_axis = Vector3(3.46, -11.085, -22.46)
+instance_shader_parameters/contour_axis_world_space = true
 instance_shader_parameters/contour_line_width = -1.145
 instance_shader_parameters/contour_spacing = 2.017
 mesh = ExtResource("4_1un0i")
@@ -56,7 +58,6 @@ script = ExtResource("1_yugi5")
 contour_spacing = 2.017
 contour_line_width = -1.145
 contour_axis = Vector3(3.46, -11.085, -22.46)
-contour_axis_world_space = null
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="." unique_id=113569407]
 transform = Transform3D(109.797035, 20.14147, -77.99951, -68.54416, 92.6321, -72.56709, 42.32377, 97.76812, 84.82384, -82.57176, 115.244965, -55.697)
@@ -74,6 +75,7 @@ contour_axis = Vector3(-1.855, 1.155, 1.605)
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="." unique_id=705519797]
 transform = Transform3D(900, 0, 0, 0, 900, 0, 0, 0, 900, 239.10931, -441.52933, -192.9505)
 instance_shader_parameters/contour_axis = Vector3(0.715, 0, 1.575)
+instance_shader_parameters/contour_axis_world_space = true
 instance_shader_parameters/contour_line_width = -0.08
 instance_shader_parameters/contour_spacing = 8.122
 mesh = ExtResource("6_4vetl")
@@ -82,4 +84,6 @@ script = ExtResource("1_yugi5")
 contour_spacing = 8.122
 contour_line_width = -0.08
 contour_axis = Vector3(0.715, 0, 1.575)
-contour_axis_world_space = null
+
+[node name="ParticleCloud" parent="." unique_id=1743543361 instance=ExtResource("7_m84gs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99.75663, 94.611374, 0)
