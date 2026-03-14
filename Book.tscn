@@ -7,14 +7,23 @@
 code = "shader_type spatial;
 
 uniform sampler2D viewport_tex;
+// 只在书页 UV 的该矩形内绘制 SubViewport，区域外显示 outside_color
+uniform vec2 uv_rect_min = vec2(0.0, 0.0);
+uniform vec2 uv_rect_max = vec2(1.0, 1.0);
+uniform vec3 outside_color = vec3(0.95, 0.93, 0.88);
 
 void vertex() {
 }
 
 void fragment() {
-	// 用书页 UV 采样 SubViewport 渲染的 sky，V 需翻转与视口一致
-	vec2 uv = vec2(UV.x, 1.0 - UV.y);
-	ALBEDO = texture(viewport_tex, uv).rgb;
+	vec2 min_uv = uv_rect_min;
+	vec2 max_uv = uv_rect_max;
+	if (UV.x < min_uv.x || UV.x > max_uv.x || UV.y < min_uv.y || UV.y > max_uv.y) {
+		ALBEDO = outside_color;
+	} else {
+		vec2 uv = (UV - min_uv) / (max_uv - min_uv);
+		ALBEDO = texture(viewport_tex, uv).rgb;
+	}
 }
 "
 
@@ -25,6 +34,9 @@ viewport_path = NodePath("book content/SubViewport")
 render_priority = 0
 shader = SubResource("Shader_d1o3a")
 shader_parameter/viewport_tex = SubResource("ViewportTexture_el5v3")
+shader_parameter/uv_rect_min = Vector2(0.065, 0.35)
+shader_parameter/uv_rect_max = Vector2(0.485, 0.875)
+shader_parameter/outside_color = Vector3(0.95, 0.93, 0.88)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e1go6"]
 resource_name = "altesBuch-haupttext"
