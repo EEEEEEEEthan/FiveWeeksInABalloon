@@ -9,8 +9,8 @@ uniform sampler2D scene_normal_texture : hint_normal_roughness_texture, repeat_d
 uniform vec4 ink_color : source_color = vec4(0.05, 0.06, 0.08, 1.0);
 uniform vec4 fill_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform sampler2D fill_texture : source_color, hint_default_white, repeat_disable, filter_linear_mipmap;
-uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
-uniform float outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
+instance uniform float outline_width : hint_range(0.001, 1.0, 0.001) = 0.18;
+instance uniform float outline_softness : hint_range(0.001, 1.0, 0.001) = 0.2;
 uniform float hard_edge_width : hint_range(0.0, 1.0, 0.001) = 0.35;
 uniform vec2 hard_edge_smooth_range = vec2(0.0, 1.0);
 uniform float hard_edge_softness : hint_range(0.1, 3.0, 0.01) = 0.4;
